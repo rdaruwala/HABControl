@@ -45,7 +45,9 @@ Sd2Card card;
 SdVolume volume;
 SdFile root;
 const int chipSelect = 10;
-boolean SDPresent;
+boolean SDPresent = true;
+File configFile;
+File dataFile;
 
 //Initialize BME Sensor (Temperature, Pressure, Humidity)
 Adafruit_BME280 bme; 
@@ -57,11 +59,15 @@ Adafruit_LSM303_Accel_Unified accel = Adafruit_LSM303_Accel_Unified(54321);
 Adafruit_LSM303_Mag_Unified mag = Adafruit_LSM303_Mag_Unified(12345);
 
 
+//Data to get
+String frequency = "";
+String CallSign = "";
+String dataDumpFile = "data.csv";
+boolean logData = true;
 
 
 void setup() {
   Serial.begin(9600);
-  SDPresent = true;
 
   //If accelerometer can't be started, stall the program
   {
@@ -81,6 +87,22 @@ void setup() {
   if (!card.init(SPI_HALF_SPEED, chipSelect)) {
     Serial.println("Unable to initialize the SD Card!");
     SDPresent = false;
+  }
+  else{
+    //SD Card is here, time to load Config
+    //First, check to see if Config File exists
+    if(SD.exists("config.txt")){
+      //If so, open it
+      configFile = SD.open("config.txt", FILE_READ);
+      //TODO PULL VARIABLES
+      configFile.close();
+    }
+    else{
+      //If not, create it and input variables
+    }
+    
+
+    
   } 
 
   //If BME Sensor can't be started, stall the program
@@ -95,4 +117,70 @@ void setup() {
 void loop() {
   //TODO
 
+}
+
+void setupSDCard(){
+  configFile = SD.open("config.txt", FILE_WRITE);
+  Serial.println("Empty SD Card detected, writing variables...");
+  
+  configFile.println("//Callsign, this will essentialle be your payload ID");
+  configFile.println("CallSign=");
+  configFile.println();
+  configFile.println("//Radio frequency, this is the approximate frequency the MTX transmitter will transmit at");
+  configFile.println("//Default is 434.650");
+  configFile.println("Frequency=434.650");
+  configFile.println();
+  configFile.println("//Do we want to log data?");
+  configFile.println("//Default is true");
+  configFile.println("Log Data=true");
+  configFile.println();
+  configFile.println("//Name of the data dump file");
+  configFile.println("Default is data.csv");
+  configFile.println("Data File=data.csv");
+
+  configFile.close();
+}
+
+boolean loadSDValues(){
+  configFile = SD.open("config.txt", FILE_READ);
+  boolean setFrequency = false;
+  boolean setCallSign = false;
+  boolean setDataFile = false;
+  boolean setLogData = false;
+
+  //Read lines until we get our config values, then set them to the global variables
+  while(configFile.available()){
+    String nextLine = configFile.read();
+
+    //Check if it's a line with one of our vars
+    if(nextLine.startsWith("CallSign=")){
+      CallSign = nextLine.substring(9).trim(); //Everything after the "="
+      Serial.println("CallSign set to: " + CallSign);
+      setCallSign = CallSign.length > 0;
+    }
+    else if(nextLine.startsWith("Frequency=")){
+      frequency = nextLine.substring(10).trim(); //Everything after the "="
+      Serial.println("Frequency set to: " + frequency + " MHz");
+      setFrequency = frequency.length() > 0;
+    }
+    else if(nextLine.startsWith("Log Data=")){
+      logData = (bool) nextLine.substring(9).trim().toLowerCase(); //Everything after the "="
+      Serial.println("Logging data set to: " + logData);
+      setLogData = true;
+    }
+    else if(nextLine.startsWith("Data File=")){
+      dataDumpFile = nextLine.substring(10).trim(); //Everything after the "="
+      Serial.println("Data File to: " + dataDumpFile);
+      setDataFile = dataDumpFile.length() > 0;
+    }
+  }
+
+  //Return whether settings have been set or not
+  if(logData){
+    return setFrequency && setCallSign && setDataFile && setLogData;
+  }
+  else{
+    return setFrequency && setCallSign && setLogData;
+  }
+  
 }
