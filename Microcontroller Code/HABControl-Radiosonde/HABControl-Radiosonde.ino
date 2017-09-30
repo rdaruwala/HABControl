@@ -17,10 +17,15 @@
 
  
  The latest code is available here : https://github.com/rdaruwala/HABControl
+
+ Maintained by Rohan Daruwala
+
+ Contact @ rdaruwala@gmail.com
 */
 
 
 
+//Import Libraries Needed For Sensors
 #include <Wire.h>
 #include <SPI.h>
 #include <SD.h>
@@ -29,21 +34,25 @@
 #include "Adafruit_Sensor.h"
 #include "Adafruit_LSM303_U.h"
 
+//Pins needed for the BME (Temperature, Pressure, Humidity)
 #define BME_SCK 13
 #define BME_MISO 12
 #define BME_MOSI 11
 #define BME_CS 10
 
+//Variables used for the SD Card (Data Logging & Storing Variable Data (Transmit Frequency, Callsign, etc.))
 Sd2Card card;
 SdVolume volume;
 SdFile root;
 const int chipSelect = 10;
 boolean SDPresent;
 
+//Initialize BME Sensor (Temperature, Pressure, Humidity)
 Adafruit_BME280 bme; 
 #define SEALEVELPRESSURE_HPA (1013.25) //CALIBRATION
 
 
+//Initialize subparts for the LSM303 (Accelerometer & Magnetometer) 
 Adafruit_LSM303_Accel_Unified accel = Adafruit_LSM303_Accel_Unified(54321);
 Adafruit_LSM303_Mag_Unified mag = Adafruit_LSM303_Mag_Unified(12345);
 
@@ -54,23 +63,27 @@ void setup() {
   Serial.begin(9600);
   SDPresent = true;
 
-  if(!accel.begin())
+  //If accelerometer can't be started, stall the program
   {
     Serial.println("Unable to initialize the accelerometer portion of the LSM303!");
     while(1);
   }
 
+  //If magnetometer can't be started, stall the program
   if(!mag.begin())
   {
     Serial.println("Unable to initialize the magnetometer portion of the LSM303!");
     while(1);
   }
 
+  //If SD Card can't be started we'll continue the program, but set SDPresent to false
+  //so that we know later not to try and log to or read from the SD Card
   if (!card.init(SPI_HALF_SPEED, chipSelect)) {
     Serial.println("Unable to initialize the SD Card!");
     SDPresent = false;
   } 
 
+  //If BME Sensor can't be started, stall the program
   if (!bme.begin()) {
         Serial.println("Unable to initialize the BME280!");
         while (1);
