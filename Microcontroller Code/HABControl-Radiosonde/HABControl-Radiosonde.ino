@@ -27,7 +27,7 @@
 #include "Adafruit_BME280.h"
 #include "Adafruit_Sensor.h"
 #include "Adafruit_Sensor.h"
-#include "Adafruit_LSM303.h"
+#include "Adafruit_LSM303_U.h"
 
 #define BME_SCK 13
 #define BME_MISO 12
@@ -40,20 +40,30 @@ SdFile root;
 const int chipSelect = 10;
 boolean SDPresent;
 
-Adafruit_LSM303 lsm;
-
-Adafruit_BME280 bme; // I2C
+Adafruit_BME280 bme; 
 #define SEALEVELPRESSURE_HPA (1013.25) //CALIBRATION
+
+
+Adafruit_LSM303_Accel_Unified accel = Adafruit_LSM303_Accel_Unified(54321);
+Adafruit_LSM303_Mag_Unified mag = Adafruit_LSM303_Mag_Unified(12345);
+
+
 
 
 void setup() {
   Serial.begin(9600);
   SDPresent = true;
-  
-  if (!lsm.begin())
+
+  if(!accel.begin())
   {
-    Serial.println("Unable to initialize the LSM303!");
-    while (1);
+    Serial.println("Unable to initialize the accelerometer portion of the LSM303!");
+    while(1);
+  }
+
+  if(!mag.begin())
+  {
+    Serial.println("Unable to initialize the magnetometer portion of the LSM303!");
+    while(1);
   }
 
   if (!card.init(SPI_HALF_SPEED, chipSelect)) {
@@ -70,6 +80,6 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  //TODO
 
 }
