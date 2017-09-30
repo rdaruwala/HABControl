@@ -94,6 +94,11 @@ void setup() {
     if(SD.exists("config.txt")){
       if(loadSDValues){
         Serial.println("Loaded config values successfully!");
+
+        //If we're datalogging, let's load up the data file
+        dataFile = SD.open(dataDumpFile, FILE_WRITE);
+        //TODO PUT INITIAL CSV VALUES
+        dataFile.close();
       }
       else{
         Serial.println("Error loading SD card values! Please fill out the settings (or delete the file to refresh it) and try again.");
@@ -143,7 +148,7 @@ void setupSDCard(){
 
   configFile.close();
 
-  Serial.println("Please fill out the config files on the SD card and restart the program);
+  Serial.println("Please fill out the config files on the SD card and restart the program");
   while(1);
 }
 
@@ -156,26 +161,44 @@ boolean loadSDValues(){
 
   //Read lines until we get our config values, then set them to the global variables
   while(configFile.available()){
-    String nextLine = configFile.read();
+    String nextLine = "";
+    boolean doneWithLine = false;
+    while(!doneWithLine){
+      char nextChar = configFile.read();
+      if(nextChar == '\r' || nextChar == '\n'){
+        doneWithLine = true;
+      }
+      else{
+        nextLine = nextLine + nextChar;
+      }
+      
+    }
 
     //Check if it's a line with one of our vars
     if(nextLine.startsWith("CallSign=")){
-      CallSign = nextLine.substring(9).trim(); //Everything after the "="
+      CallSign = nextLine.substring(9); //Everything after the "="
+      CallSign.trim();
       Serial.println("CallSign set to: " + CallSign);
-      setCallSign = CallSign.length > 0;
+      setCallSign = CallSign.length() > 0;
     }
     else if(nextLine.startsWith("Frequency=")){
-      frequency = nextLine.substring(10).trim(); //Everything after the "="
+      frequency = nextLine.substring(10); //Everything after the "="
+      frequency.trim();
       Serial.println("Frequency set to: " + frequency + " MHz");
       setFrequency = frequency.length() > 0;
     }
     else if(nextLine.startsWith("Log Data=")){
-      logData = (bool) nextLine.substring(9).trim().toLowerCase(); //Everything after the "="
+      String temp = nextLine.substring(9); //Take string to convert to boolean
+      temp = nextLine.substring(9); //Everything after the "="
+      temp.trim();
+      temp.toLowerCase();
+      logData = (bool) temp;
       Serial.println("Logging data set to: " + logData);
       setLogData = true;
     }
     else if(nextLine.startsWith("Data File=")){
-      dataDumpFile = nextLine.substring(10).trim(); //Everything after the "="
+      dataDumpFile = nextLine.substring(10); //Everything after the "="
+      dataDumpFile.trim();
       Serial.println("Data File to: " + dataDumpFile);
       setDataFile = dataDumpFile.length() > 0;
     }
