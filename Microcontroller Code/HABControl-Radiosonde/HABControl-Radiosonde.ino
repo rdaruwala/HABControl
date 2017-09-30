@@ -26,6 +26,8 @@
 #include <SD.h>
 #include "Adafruit_BME280.h"
 #include "Adafruit_Sensor.h"
+#include "Adafruit_Sensor.h"
+#include "Adafruit_LSM303.h"
 
 #define BME_SCK 13
 #define BME_MISO 12
@@ -36,6 +38,8 @@ Sd2Card card;
 SdVolume volume;
 SdFile root;
 const int chipSelect = 10;
+
+Adafruit_LSM303 lsm;
 
 Adafruit_BME280 bme; // I2C
 #define SEALEVELPRESSURE_HPA (1013.25) //CALIBRATION
