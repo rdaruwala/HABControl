@@ -92,13 +92,16 @@ void setup() {
     //SD Card is here, time to load Config
     //First, check to see if Config File exists
     if(SD.exists("config.txt")){
-      //If so, open it
-      configFile = SD.open("config.txt", FILE_READ);
-      //TODO PULL VARIABLES
-      configFile.close();
+      if(loadSDValues){
+        Serial.println("Loaded config values successfully!");
+      }
+      else{
+        Serial.println("Error loading SD card values! Please fill out the settings (or delete the file to refresh it) and try again.");
+        while(1);
+      }
     }
     else{
-      //If not, create it and input variables
+      setupSDCard();
     }
     
 
@@ -139,6 +142,9 @@ void setupSDCard(){
   configFile.println("Data File=data.csv");
 
   configFile.close();
+
+  Serial.println("Please fill out the config files on the SD card and restart the program);
+  while(1);
 }
 
 boolean loadSDValues(){
@@ -174,6 +180,8 @@ boolean loadSDValues(){
       setDataFile = dataDumpFile.length() > 0;
     }
   }
+
+  configFile.close();
 
   //Return whether settings have been set or not
   if(logData){
