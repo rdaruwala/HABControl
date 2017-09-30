@@ -38,6 +38,7 @@ Sd2Card card;
 SdVolume volume;
 SdFile root;
 const int chipSelect = 10;
+boolean SDPresent;
 
 Adafruit_LSM303 lsm;
 
@@ -46,7 +47,25 @@ Adafruit_BME280 bme; // I2C
 
 
 void setup() {
-  // put your setup code here, to run once:
+  Serial.begin(9600);
+  SDPresent = true;
+  
+  if (!lsm.begin())
+  {
+    Serial.println("Unable to initialize the LSM303!");
+    while (1);
+  }
+
+  if (!card.init(SPI_HALF_SPEED, chipSelect)) {
+    Serial.println("Unable to initialize the SD Card!");
+    SDPresent = false;
+  } 
+
+  if (!bme.begin()) {
+        Serial.println("Unable to initialize the BME280!");
+        while (1);
+  }
+  
 
 }
 
