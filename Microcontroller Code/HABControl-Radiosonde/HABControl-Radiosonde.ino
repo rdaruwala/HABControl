@@ -23,6 +23,7 @@
 
 #include <Wire.h>
 #include <SPI.h>
+#include <SD.h>
 #include "Adafruit_BME280.h"
 #include "Adafruit_Sensor.h"
 
@@ -31,6 +32,10 @@
 #define BME_MOSI 11
 #define BME_CS 10
 
+Sd2Card card;
+SdVolume volume;
+SdFile root;
+const int chipSelect = 10;
 
 Adafruit_BME280 bme; // I2C
 #define SEALEVELPRESSURE_HPA (1013.25) //CALIBRATION
