@@ -75,6 +75,7 @@ void setup() {
     while(1);
   }
 
+  mag.enableAutoRange(true);
   //If magnetometer can't be started, stall the program
   if(!mag.begin())
   {
@@ -124,6 +125,26 @@ void setup() {
 
 void loop() {
   //TODO
+
+  //BME Variables
+  float BMEtemp = bme.readTemperature();
+  float BMEpressure = bme.readPressure() / 100.0F;
+  float BMEaltitude = bme.readAltitude(SEALEVELPRESSURE_HPA);
+  float BMEhumidity = bme.readHumidity();
+
+  //Accelerometer + Magnetometer Variables
+  sensors_event_t event;
+  accel.getEvent(&event);
+
+  float magX = event.magnetic.x; //Raw (Non-unified) is mag.raw.x 
+  float magY = event.magnetic.y; //Raw (Non-unified) is mag.raw.y
+  float magZ = event.magnetic.z; //Raw (Non-unified) is mag.raw.z
+
+  float accelX = event.acceleration.x; //Raw (Non-unified) is accel.raw.x 
+  float accelY = event.acceleration.y; //Raw (Non-unified) is accel.raw.y
+  float accelZ = event.acceleration.z; //Raw (Non-unified) is accel.raw.z
+
+  
 
 }
 
