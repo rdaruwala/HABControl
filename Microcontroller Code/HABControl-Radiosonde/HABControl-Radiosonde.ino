@@ -45,7 +45,6 @@ Sd2Card card;
 SdVolume volume;
 SdFile root;
 const int chipSelect = 10;
-boolean SDPresent = true;
 File configFile;
 File dataFile;
 
@@ -83,11 +82,10 @@ void setup() {
     while(1);
   }
 
-  //If SD Card can't be started we'll continue the program, but set SDPresent to false
-  //so that we know later not to try and log to or read from the SD Card
+  //If SD Card can't be started we'll stall
   if (!card.init(SPI_HALF_SPEED, chipSelect)) {
     Serial.println("Unable to initialize the SD Card!");
-    SDPresent = false;
+    while(1);
   }
   else{
     //SD Card is here, time to load Config
