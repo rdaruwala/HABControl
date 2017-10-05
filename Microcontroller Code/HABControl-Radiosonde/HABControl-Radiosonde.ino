@@ -71,7 +71,7 @@ void setup() {
 
   //If accelerometer can't be started, stall the program
   if(!accel.begin()){
-    Serial.println("Unable to initialize the accelerometer portion of the LSM303!");
+    Serial.println(F("Unable to initialize the accelerometer portion of the LSM303!"));
     while(1);
   }
 
@@ -79,13 +79,13 @@ void setup() {
   //If magnetometer can't be started, stall the program
   if(!mag.begin())
   {
-    Serial.println("Unable to initialize the magnetometer portion of the LSM303!");
+    Serial.println(F("Unable to initialize the magnetometer portion of the LSM303!"));
     while(1);
   }
 
   //If SD Card can't be started we'll stall
   if (!card.init(SPI_HALF_SPEED, chipSelect)) {
-    Serial.println("Unable to initialize the SD Card!");
+    Serial.println(F("Unable to initialize the SD Card!"));
     while(1);
   }
   else{
@@ -101,7 +101,7 @@ void setup() {
         dataFile.close();
       }
       else{
-        Serial.println("Error loading SD card values! Please fill out the settings (or delete the file to refresh it) and try again.");
+        Serial.println(F("Error loading SD card values! Please fill out the settings (or delete the file to refresh it) and try again."));
         while(1);
       }
     }
@@ -115,7 +115,7 @@ void setup() {
 
   //If BME Sensor can't be started, stall the program
   if (!bme.begin()) {
-        Serial.println("Unable to initialize the BME280!");
+        Serial.println(F("Unable to initialize the BME280!"));
         while (1);
   }
   
@@ -164,24 +164,24 @@ void setupSDCard(){
   configFile = SD.open("config.txt", FILE_WRITE);
   Serial.println("Empty SD Card detected, writing variables...");
   
-  configFile.println("//Callsign, this will essentialle be your payload ID");
-  configFile.println("CallSign=");
+  configFile.println(F("//Callsign, this will essentialle be your payload ID"));
+  configFile.println(F("CallSign="));
   configFile.println();
-  configFile.println("//Radio frequency, this is the approximate frequency the MTX transmitter will transmit at");
-  configFile.println("//Default is 434.650");
-  configFile.println("Frequency=434.650");
+  configFile.println(F("//Radio frequency, this is the approximate frequency the MTX transmitter will transmit at"));
+  configFile.println(F("//Default is 434.650"));
+  configFile.println(F("Frequency=434.650"));
   configFile.println();
-  configFile.println("//Sea-Level Pressure for the Barometer, in units hPa");
-  configFile.println("//Default is 1013.25");
-  configFile.println("Sea Pressure=1013.25");
+  configFile.println(F("//Sea-Level Pressure for the Barometer, in units hPa"));
+  configFile.println(F("//Default is 1013.25"));
+  configFile.println(F("Sea Pressure=1013.25"));
   configFile.println();
-  configFile.println("//Do we want to log data?");
-  configFile.println("//Default is true");
-  configFile.println("Log Data=true");
+  configFile.println(F("//Do we want to log data?"));
+  configFile.println(F("//Default is true"));
+  configFile.println(F("Log Data=true"));
   configFile.println();
-  configFile.println("//Name of the data dump file");
-  configFile.println("Default is data.csv");
-  configFile.println("Data File=data.csv");
+  configFile.println(F("//Name of the data dump file"));
+  configFile.println(F("Default is data.csv"));
+  configFile.println(F("Data File=data.csv"));
 
   configFile.close();
 
