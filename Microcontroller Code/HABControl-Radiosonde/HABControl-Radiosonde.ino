@@ -143,6 +143,19 @@ void loop() {
   float accelY = event.acceleration.y; //Raw (Non-unified) is accel.raw.y
   float accelZ = event.acceleration.z; //Raw (Non-unified) is accel.raw.z
 
+  Serial.println("BME Temperature: " + (String)BMEtemp);
+  Serial.println("BME Pressure: " + (String)BMEpressure);
+  Serial.println("BME Altitude: " + (String)BMEaltitude);
+  Serial.println("BME Humidity: " + (String)BMEhumidity);
+
+  Serial.println("MagX: " + (String)magX);
+  Serial.println("MagY: " + (String)magY);
+  Serial.println("MagZ: " + (String)magZ);
+
+  Serial.println("AccelX: " + (String)accelX);
+  Serial.println("AccelY: " + (String)accelY);
+  Serial.println("AccelZ: " + (String)accelZ);
+
   
 
 }
