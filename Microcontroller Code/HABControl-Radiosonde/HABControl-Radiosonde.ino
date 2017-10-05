@@ -51,6 +51,7 @@ File dataFile;
 //Initialize BME Sensor (Temperature, Pressure, Humidity)
 Adafruit_BME280 bme; 
 #define SEALEVELPRESSURE_HPA (1013.25) //CALIBRATION
+float CALI_PRESSURE = 1013.25; 
 
 
 //Initialize subparts for the LSM303 (Accelerometer & Magnetometer) 
@@ -127,7 +128,7 @@ void loop() {
   //BME Variables
   float BMEtemp = bme.readTemperature();
   float BMEpressure = bme.readPressure() / 100.0F;
-  float BMEaltitude = bme.readAltitude(SEALEVELPRESSURE_HPA);
+  float BMEaltitude = bme.readAltitude(CALI_PRESSURE);
   float BMEhumidity = bme.readHumidity();
 
   //Accelerometer + Magnetometer Variables
@@ -157,6 +158,10 @@ void setupSDCard(){
   configFile.println("//Default is 434.650");
   configFile.println("Frequency=434.650");
   configFile.println();
+  configFile.println("//Sea-Level Pressure for the Barometer, in units hPa");
+  configFile.println("//Default is 1013.25");
+  configFile.println("Sea Pressure=1013.25");
+  configFile.println();
   configFile.println("//Do we want to log data?");
   configFile.println("//Default is true");
   configFile.println("Log Data=true");
@@ -177,6 +182,7 @@ boolean loadSDValues(){
   boolean setCallSign = false;
   boolean setDataFile = false;
   boolean setLogData = false;
+  boolean setCalibrationPressure = false;
 
   //Read lines until we get our config values, then set them to the global variables
   while(configFile.available()){
@@ -221,16 +227,23 @@ boolean loadSDValues(){
       Serial.println("Data File to: " + dataDumpFile);
       setDataFile = dataDumpFile.length() > 0;
     }
+    else if(nextLine.startsWith("Sea Pressure=")){
+      String temp = nextLine.substring(13); //Everything after the "="
+      temp.trim();
+      CALI_PRESSURE = temp.toFloat();
+      Serial.println("Calibration Pressure set to: " + (String)CALI_PRESSURE);
+      setCalibrationPressure = temp.length() > 0;
+    }
   }
 
   configFile.close();
 
   //Return whether settings have been set or not
   if(logData){
-    return setFrequency && setCallSign && setDataFile && setLogData;
+    return setFrequency && setCallSign && setDataFile && setLogData && setCalibrationPressure;
   }
   else{
-    return setFrequency && setCallSign && setLogData;
+    return setFrequency && setCallSign && setLogData && setCalibrationPressure;
   }
   
 }
