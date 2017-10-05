@@ -41,11 +41,6 @@
 #define BME_CS 10
 
 //Variables used for the SD Card (Data Logging & Storing Variable Data (Transmit Frequency, Callsign, etc.))
-Sd2Card card;
-SdVolume volume;
-SdFile root;
-const int chipSelect = 10;
-File configFile;
 File dataFile;
 
 //Initialize BME Sensor (Temperature, Pressure, Humidity)
@@ -84,7 +79,7 @@ void setup() {
   }
 
   //If SD Card can't be started we'll stall
-  if (!card.init(SPI_HALF_SPEED, chipSelect)) {
+  if (!SD.begin(SPI_HALF_SPEED, 10)) {
     Serial.println(F("Unable to initialize the SD Card!"));
     while(1);
   }
@@ -93,7 +88,7 @@ void setup() {
     //First, check to see if Config File exists
     if(SD.exists("config.txt")){
       if(loadSDValues){
-        Serial.println("Loaded config values successfully!");
+        Serial.println(F("Loaded config values successfully!"));
 
         //If we're datalogging, let's load up the data file
         dataFile = SD.open(dataDumpFile, FILE_WRITE);
@@ -107,6 +102,7 @@ void setup() {
     }
     else{
       setupSDCard();
+      while(1);
     }
     
 
@@ -156,15 +152,15 @@ void loop() {
   Serial.println("AccelY: " + (String)accelY);
   Serial.println("AccelZ: " + (String)accelZ);
 
-  
-
+  delay(3000);
 }
 
 void setupSDCard(){
-  configFile = SD.open("config.txt", FILE_WRITE);
+  File configFile = SD.open("config.txt", FILE_WRITE);
   Serial.println("Empty SD Card detected, writing variables...");
-  
-  configFile.println(F("//Callsign, this will essentialle be your payload ID"));
+
+  if(configFile){
+  configFile.println(F("//Callsign, this will essentially be your payload ID"));
   configFile.println(F("CallSign="));
   configFile.println();
   configFile.println(F("//Radio frequency, this is the approximate frequency the MTX transmitter will transmit at"));
@@ -182,15 +178,16 @@ void setupSDCard(){
   configFile.println(F("//Name of the data dump file"));
   configFile.println(F("Default is data.csv"));
   configFile.println(F("Data File=data.csv"));
-
   configFile.close();
-
-  Serial.println("Please fill out the config files on the SD card and restart the program");
-  while(1);
+  Serial.println(F("Please fill out the config files on the SD card and restart the program"));
+  }
+  else{
+    Serial.println(F("There was an error writing to the SD Card."));
+  }
 }
 
 boolean loadSDValues(){
-  configFile = SD.open("config.txt", FILE_READ);
+  File configFile = SD.open("config.txt", FILE_READ);
   boolean setFrequency = false;
   boolean setCallSign = false;
   boolean setDataFile = false;
