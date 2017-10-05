@@ -70,7 +70,7 @@ void setup() {
   Serial.begin(9600);
 
   //If accelerometer can't be started, stall the program
-  {
+  if(!accel.begin()){
     Serial.println("Unable to initialize the accelerometer portion of the LSM303!");
     while(1);
   }
