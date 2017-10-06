@@ -162,23 +162,23 @@ void setupSDCard(){
   Serial.println(F("Writing variables..."));
 
   if(configFile){
-  configFile.println(F("//Callsign, this will essentially be your payload ID"));
+  configFile.println(F("# Callsign, this will essentially be your payload ID"));
   configFile.println(F("CallSign="));
   configFile.println();
-  configFile.println(F("//Radio frequency, this is the approximate frequency the MTX transmitter will transmit at"));
-  configFile.println(F("//Default is 434.650"));
+  configFile.println(F("# Radio frequency, this is the approximate frequency the MTX transmitter will transmit at"));
+  configFile.println(F("# Default is 434.650. Please use the format 434.XYZ"));
   configFile.println(F("Frequency=434.650"));
   configFile.println();
-  configFile.println(F("//Sea-Level Pressure for the Barometer, in units hPa"));
-  configFile.println(F("//Default is 1013.25"));
+  configFile.println(F("# Sea-Level Pressure for the Barometer, in units hPa. Used for calibration in determining Altitude"));
+  configFile.println(F("# Default is 1013.25"));
   configFile.println(F("Sea Pressure=1013.25"));
   configFile.println();
-  configFile.println(F("//Do we want to log data?"));
-  configFile.println(F("//Default is true"));
+  configFile.println(F("# Do we want to log data?"));
+  configFile.println(F("# Default is true"));
   configFile.println(F("Log Data=true"));
   configFile.println();
-  configFile.println(F("//Name of the data dump file"));
-  configFile.println(F("Default is data.csv"));
+  configFile.println(F("# Name of the data dump file"));
+  configFile.println(F("# Default is data.csv"));
   configFile.println(F("Data File=data.csv"));
   configFile.close();
   Serial.println(F("Please fill out the config files on the SD card and restart the program"));
