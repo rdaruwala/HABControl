@@ -79,7 +79,7 @@ void setup() {
   }
 
   //If SD Card can't be started we'll stall
-  if (!SD.begin(SPI_HALF_SPEED, 10)) {
+  if (!SD.begin(10)) {
     Serial.println(F("Unable to initialize the SD Card!"));
     while(1);
   }
@@ -96,7 +96,9 @@ void setup() {
         dataFile.close();
       }
       else{
-        Serial.println(F("Error loading SD card values! Please fill out the settings (or delete the file to refresh it) and try again."));
+        Serial.println(F("Error loading SD card values! Please fill out the settings and try again."));
+        SD.remove("config.txt");
+        setupSDCard();
         while(1);
       }
     }
@@ -157,7 +159,7 @@ void loop() {
 
 void setupSDCard(){
   File configFile = SD.open("config.txt", FILE_WRITE);
-  Serial.println("Empty SD Card detected, writing variables...");
+  Serial.println(F("Writing variables..."));
 
   if(configFile){
   configFile.println(F("//Callsign, this will essentially be your payload ID"));
@@ -194,7 +196,6 @@ boolean loadSDValues(){
   boolean setLogData = false;
   boolean setCalibrationPressure = false;
 
-  Serial.println("Starting");
   //Read lines until we get our config values, then set them to the global variables
   while(configFile.available()){
     String nextLine = "";
@@ -209,8 +210,6 @@ boolean loadSDValues(){
       }
       
     }
-
-    Serial.println("Line: " + nextLine);
 
     //Check if it's a line with one of our vars
     if(nextLine.startsWith("CallSign=")){
@@ -231,7 +230,7 @@ boolean loadSDValues(){
       temp.trim();
       temp.toLowerCase();
       logData = (bool) temp;
-      Serial.println("Logging data set to: " + logData);
+      Serial.println("Logging data set to: " + (String)logData);
       setLogData = true;
     }
     else if(nextLine.startsWith("Data File=")){
@@ -250,7 +249,6 @@ boolean loadSDValues(){
   }
 
   configFile.close();
-  Serial.println("Next....");
   //Return whether settings have been set or not
   if(logData){
     return setFrequency && setCallSign && setDataFile && setLogData && setCalibrationPressure;
