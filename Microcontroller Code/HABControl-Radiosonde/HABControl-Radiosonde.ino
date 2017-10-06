@@ -87,7 +87,7 @@ void setup() {
     //SD Card is here, time to load Config
     //First, check to see if Config File exists
     if(SD.exists("config.txt")){
-      if(loadSDValues){
+      if(loadSDValues()){
         Serial.println(F("Loaded config values successfully!"));
 
         //If we're datalogging, let's load up the data file
@@ -194,6 +194,7 @@ boolean loadSDValues(){
   boolean setLogData = false;
   boolean setCalibrationPressure = false;
 
+  Serial.println("Starting");
   //Read lines until we get our config values, then set them to the global variables
   while(configFile.available()){
     String nextLine = "";
@@ -208,6 +209,8 @@ boolean loadSDValues(){
       }
       
     }
+
+    Serial.println("Line: " + nextLine);
 
     //Check if it's a line with one of our vars
     if(nextLine.startsWith("CallSign=")){
@@ -247,7 +250,7 @@ boolean loadSDValues(){
   }
 
   configFile.close();
-
+  Serial.println("Next....");
   //Return whether settings have been set or not
   if(logData){
     return setFrequency && setCallSign && setDataFile && setLogData && setCalibrationPressure;
