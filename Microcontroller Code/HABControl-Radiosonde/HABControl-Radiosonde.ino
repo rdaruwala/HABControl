@@ -34,11 +34,6 @@
 #include "Adafruit_Sensor.h"
 #include "Adafruit_LSM303_U.h"
 
-//Pins needed for the BME (Temperature, Pressure, Humidity)
-#define BME_SCK 13
-#define BME_MISO 12
-#define BME_MOSI 11
-#define BME_CS 10
 
 //Variables used for the SD Card (Data Logging & Storing Variable Data (Transmit Frequency, Callsign, etc.))
 File dataFile;
@@ -59,6 +54,7 @@ String frequency = "";
 String CallSign = "";
 String dataDumpFile = "data.csv";
 boolean logData = true;
+boolean radio = true;
 
 
 void setup() {
@@ -180,6 +176,12 @@ void setupSDCard(){
   configFile.println(F("# Name of the data dump file"));
   configFile.println(F("# Default is data.csv"));
   configFile.println(F("Data File=data.csv"));
+  configFile.println();
+  configFile.println(F("# Do we want to transmit data over radio?"));
+  configFile.println(F("# Default is true"));
+  configFile.println(F("# NOTE - If you set this to FALSE, please make sure you have AT LEAST one other method of tracking your balloon."));
+  configFile.println(F("# NOTE - In the United States, you require an Amateur Radio License to transmit on this radio band."));
+  configFile.println(F("Enable Radio=true"));
   configFile.close();
   Serial.println(F("Please fill out the config files on the SD card and restart the program"));
   }
@@ -195,6 +197,7 @@ boolean loadSDValues(){
   boolean setDataFile = false;
   boolean setLogData = false;
   boolean setCalibrationPressure = false;
+  bool setRadio = false;
 
   //Read lines until we get our config values, then set them to the global variables
   while(configFile.available()){
@@ -246,15 +249,24 @@ boolean loadSDValues(){
       Serial.println("Calibration Pressure set to: " + (String)CALI_PRESSURE);
       setCalibrationPressure = temp.length() > 0;
     }
+    else if(nextLine.startsWith("Enable Radio=")){
+      String temp = nextLine.substring(13); //Take string to convert to boolean
+      temp = nextLine.substring(13); //Everything after the "="
+      temp.trim();
+      temp.toLowerCase();
+      radio = (bool) temp;
+      Serial.println("Logging data set to: " + (String)radio);
+      setRadio = true;
+    }
   }
 
   configFile.close();
   //Return whether settings have been set or not
   if(logData){
-    return setFrequency && setCallSign && setDataFile && setLogData && setCalibrationPressure;
+    return setFrequency && setCallSign && setDataFile && setLogData && setCalibrationPressure && setRadio;
   }
   else{
-    return setFrequency && setCallSign && setLogData && setCalibrationPressure;
+    return setFrequency && setCallSign && setLogData && setCalibrationPressure && setRadio;
   }
   
 }
