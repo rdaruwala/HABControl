@@ -39,7 +39,7 @@ Data File=data.csv
 # Do we want to transmit data over radio?
 # Default is true
 # NOTE - If you set this to FALSE, please make sure you have AT LEAST one other method of tracking your balloon.
-# NOTE - In the United States, you require an Amateur Radio License to transmit on this radio band.
+# NOTE - In the United States, you are required to have an Amateur Radio License to transmit on this radio band.
 Enable Radio=true
 ```
 

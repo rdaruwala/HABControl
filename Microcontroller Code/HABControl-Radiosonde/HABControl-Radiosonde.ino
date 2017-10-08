@@ -36,7 +36,7 @@
 
 
 //Variables used for the SD Card (Data Logging & Storing Variable Data (Transmit Frequency, Callsign, etc.))
-File dataFile;
+//File dataFile;
 
 //Initialize BME Sensor (Temperature, Pressure, Humidity)
 Adafruit_BME280 bme; 
@@ -90,7 +90,7 @@ void setup() {
         Serial.println(F("Loaded config values successfully!"));
 
         //If we're datalogging, let's load up the data file
-        dataFile = SD.open(dataDumpFile, FILE_WRITE);
+        File dataFile = SD.open(dataDumpFile, FILE_WRITE);
         //TODO PUT INITIAL CSV VALUES
         dataFile.close();
       }
@@ -107,8 +107,8 @@ void setup() {
     }
 
 
-    //Start GPS @ 9600 bps
-    GPS.begin(9600); 
+  //Start GPS @ 9600 bps
+  GPS.begin(9600); 
   //
   // THE FOLLOWING COMMAND SWITCHES MODULE TO 4800 BAUD
   // THEN SWITCHES THE SOFTWARE SERIAL TO 4,800 BAUD
@@ -203,7 +203,7 @@ void setupSDCard(){
   configFile.println(F("# Do we want to transmit data over radio?"));
   configFile.println(F("# Default is true"));
   configFile.println(F("# NOTE - If you set this to FALSE, please make sure you have AT LEAST one other method of tracking your balloon."));
-  configFile.println(F("# NOTE - In the United States, you require an Amateur Radio License to transmit on this radio band."));
+  configFile.println(F("# NOTE - In the United States, you are required to have an Amateur Radio License to transmit on this radio band."));
   configFile.println(F("Enable Radio=true"));
   configFile.close();
   Serial.println(F("Please fill out the config files on the SD card and restart the program"));
