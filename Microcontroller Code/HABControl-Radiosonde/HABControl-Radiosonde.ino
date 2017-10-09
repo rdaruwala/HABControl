@@ -78,7 +78,7 @@ void setup() {
   }
 
   //If SD Card can't be started we'll stall
-  if (!SD.begin(10)) {
+  if (!SD.begin(53)) {
     Serial.println(F("Unable to initialize the SD Card!"));
     while(1);
   }
@@ -105,8 +105,9 @@ void setup() {
       setupSDCard();
       while(1);
     }
+  }
 
-
+/*
   //Start GPS @ 9600 bps
   GPS.begin(9600); 
   //
@@ -117,6 +118,7 @@ void setup() {
   GPS.begin(4800);
   GPS.flush();
 
+  //FLIGHT MODE
   uint8_t setNav[] = {
     0xB5, 0x62, 0x06, 0x24, 0x24, 0x00, 0xFF, 0xFF, 0x06, 0x03, 0x00, 0x00, 0x00, 0x00, 0x10, 0x27, 0x00, 0x00, 
     0x05, 0x00, 0xFA, 0x00, 0xFA, 0x00, 0x64, 0x00, 0x2C, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -128,7 +130,7 @@ void setup() {
   }
   gps_set_sucess=0;
     
-  } 
+ */
 
   //If BME Sensor can't be started, stall the program
   if (!bme.begin()) {
@@ -173,6 +175,8 @@ void loop() {
   Serial.println("AccelY: " + (String)accelY);
   Serial.println("AccelZ: " + (String)accelZ);
 
+  
+
   delay(3000);
 }
 
@@ -203,7 +207,7 @@ void setupSDCard(){
   configFile.println(F("# Do we want to transmit data over radio?"));
   configFile.println(F("# Default is true"));
   configFile.println(F("# NOTE - If you set this to FALSE, please make sure you have AT LEAST one other method of tracking your balloon."));
-  configFile.println(F("# NOTE - In the United States, you are required to have an Amateur Radio License to transmit on this radio band."));
+  configFile.println(F("# NOTE - In the United States, you require an Amateur Radio License to transmit on this radio band."));
   configFile.println(F("Enable Radio=true"));
   configFile.close();
   Serial.println(F("Please fill out the config files on the SD card and restart the program"));
