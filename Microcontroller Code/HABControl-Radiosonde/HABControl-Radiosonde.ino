@@ -107,7 +107,7 @@ void setup() {
     }
   }
 
-/*
+
   //Start GPS @ 9600 bps
   GPS.begin(9600); 
   //
@@ -129,8 +129,15 @@ void setup() {
     gps_set_sucess=getUBX_ACK(setNav);
   }
   gps_set_sucess=0;
-    
- */
+
+  //Disable auto-GPS polling
+  GPS.println("$PUBX,40,GLL,0,0,0,0*5C"); 
+  GPS.println("$PUBX,40,GGA,0,0,0,0*5A");
+  GPS.println("$PUBX,40,GSA,0,0,0,0*4E");
+  GPS.println("$PUBX,40,RMC,0,0,0,0*47");
+  GPS.println("$PUBX,40,GSV,0,0,0,0*59");
+  GPS.println("$PUBX,40,VTG,0,0,0,0*5E");
+ 
 
   //If BME Sensor can't be started, stall the program
   if (!bme.begin()) {
@@ -174,6 +181,18 @@ void loop() {
   Serial.println("AccelX: " + (String)accelX);
   Serial.println("AccelY: " + (String)accelY);
   Serial.println("AccelZ: " + (String)accelZ);
+
+
+  //Request GPS String
+  GPS.println("$PUBX,00*33");
+  // Wait for response
+  delay(1200); 
+
+  //Loop through and print out what's available (To be changed later)
+  while(GPS.available()){
+    Serial.write(GPS.read());
+  }
+
 
   
 
